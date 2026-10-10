@@ -1,0 +1,14 @@
+{
+   "medicine": [
+      {
+         "name": "Paracetamol",
+         "use": "Fever",
+	 "frequency":2
+      },
+      {
+         "name": "xyz medicine",
+         "use": "Cure of cancer",
+	 "frequency":1
+      }
+   ]
+}
