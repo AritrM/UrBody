@@ -35,7 +35,7 @@ class Medicine:
         use = input("Medicine use: ")
         medtype = input("daily/weekly/monthly/...: ")
         startDate = f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday}"
-        expiryDate = input("Enter the expiry date of the medicine (in YYYY-MM-DD format): ")
+        expiryDate = input("Enter the expiry date of the medicine (in DD-MM-YYYY format): ")
         frequency = int(input("Medicine frequency: "))
         mtime = {}
         if frequency > 0:
