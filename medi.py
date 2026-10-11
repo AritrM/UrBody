@@ -6,7 +6,8 @@ import threading
 class Medicine:
     def __init__(self):
         mfile = open("medfile.json","r")
-        self.data = json.load(mfile)['medicine']
+        self.rawdata = json.load(mfile)
+        self.data = self.rawdata['medicine']
         self.size = len(self.data)
         self.remindata = {}
         self.CSIGNAL = 0
@@ -30,25 +31,32 @@ class Medicine:
     def add(self):
         name = input("Medicine name: ")
         use = input("Medicine use: ")
+        medtype = input("daily/weekly/monthly/...: ")
+        startDate = f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday}"
+        print(startDate)
+        expiryDate = input("Enter the expiry date of the medicine (in YYYY-MM-DD format): ")
+        print(expiryDate)
         frequency = int(input("Medicine frequency: "))
+        mtime = {}
+        print("Fill the time slot (in HH:MM format)")
+        for i in range(frequency):
+            mtime[f"{i}"] = input(f"{i}: ")
         info = {
                 'name':name,
                 'use':use,
+                'type':medtype,
+                'startDate':startDate,
+                'expiryDate':expiryDate,
+                'time':mtime,
                 'frequency': frequency
                 }
         self.data.append(info)
 
     def save(self):
         fw = open("tmp.json","w")
-        fw.write("{\"medicine\":[")
-        for i in range(len(self.data)):
-            fw.write("{")
-            fw.write(f"\"name\": \"{self.data[i]['name']}\",\"use\": \"{self.data[i]['use']}\",\"frequency\": \"{self.data[i]['frequency']}\"")
-            fw.write("}")
-            if (i<len(self.data)-1):
-                fw.write(",")
-        fw.write("]}")
+        json.dump(self.rawdata,fw)
         fw.close()
+        print(self.data)
         print("Saved!")
 
     def checkup(self):
