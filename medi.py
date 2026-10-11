@@ -2,6 +2,7 @@
 import json
 import time
 import threading
+from notifypy import Notify
 
 class Medicine:
     def __init__(self):
@@ -22,23 +23,26 @@ class Medicine:
                 tstring = self.data[i]['time'][f'{j}'].partition(':')
                 t = int(tstring[0]) * 60 + int(tstring[2])
                 self.remindata[self.data[i]['name']].append(t)
-        print(self.remindata)
 
     def show(self):
+        i = 0
         for x in self.data:
-            print(x["name"])
+            i+=1
+            print(i,x["name"])
 
     def add(self):
         name = input("Medicine name: ")
         use = input("Medicine use: ")
         medtype = input("daily/weekly/monthly/...: ")
         startDate = f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday}"
-        print(startDate)
         expiryDate = input("Enter the expiry date of the medicine (in YYYY-MM-DD format): ")
-        print(expiryDate)
         frequency = int(input("Medicine frequency: "))
         mtime = {}
-        print("Fill the time slot (in HH:MM format)")
+        if frequency > 0:
+            print("Fill the time slot (in HH:MM format)")
+        else:
+            print("Invalid! Frequency set to 0.")
+            frequency = 0
         for i in range(frequency):
             mtime[f"{i}"] = input(f"{i}: ")
         info = {
@@ -62,22 +66,26 @@ class Medicine:
     def checkup(self):
         for i in range(len(self.data)):
             l = self.data[i]['frequency']
+            print(self.data[i]['name'],end="\t")
             for j in range(l):
-                print(self.data[i]['time'][f'{j}'])
+                print(self.data[i]['time'][f'{j}'],end=",\t")
+            print()
 
     def notify(self):
         while True:
-            t = time.localtime().tm_hour * 60 + time.localtime().tm_min
-            # print(t)
+            tmin = time.localtime().tm_hour * 60 + time.localtime().tm_min
             for i in range(self.size):
                 for x in self.remindata[self.data[i]['name']]:
                     # print(x,t)
-                    if x-t < 200:
+                    if x-tmin < 5:
                         print("Medicine time:",self.data[i]['name'])
-            time.sleep(60)
             if self.CSIGNAL == 1:
                 break
-            print("working")
+            notification = Notify()
+            notification.title = "Alert"
+            notification.message = "Medicine time!"
+            notification.send()
+            time.sleep(60)
 
     def fquit(self):
         self.CSIGNAL = 1
